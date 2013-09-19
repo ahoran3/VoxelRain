@@ -125,8 +125,8 @@ function draw(){
 				for (var x=0; x<N[0]; x++){
 					modelMatrix.setTranslate(x*delta, y*delta, z*delta)
 					           .translate(center[0],center[1],center[2])
-							   .rotate(angle*(x+y+z),0,1,1)
-							   .translate(-center[0],-center[1],-center[2]);
+							   .rotate(1,0,1,1)
+							   .translate(-center[0],angle*(-0.03),-center[2]); //todo    -center[1]
 					model.draw(projMatrix, viewMatrix, modelMatrix);
 				}
 		angle++; if (angle > 360) angle -= 360;
