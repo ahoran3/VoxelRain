@@ -1,3 +1,8 @@
+// Jonathan Cools-Lartigue, Brandon Forster
+// Matt Hansen, Alex Horan
+// CAP 4720- Project 1
+// 24 September 2013
+
 
 	// ... global variables ...
 	var modelId = 0;

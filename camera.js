@@ -1,3 +1,8 @@
+// Jonathan Cools-Lartigue, Brandon Forster
+// Matt Hansen, Alex Horan
+// CAP 4720- Project 1
+// 24 September 2013
+
 function Camera(gl,d,modelUp) // Compute a camera from model's bounding box dimensions
 {
 	var center = [(d.min[0]+d.max[0])/2,(d.min[1]+d.max[1])/2,(d.min[2]+d.max[2])/2];

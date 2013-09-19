@@ -1,3 +1,8 @@
+// Jonathan Cools-Lartigue, Brandon Forster
+// Matt Hansen, Alex Horan
+// CAP 4720- Project 1
+// 24 September 2013
+
 function RenderableModel(gl,model){
 	function Drawable(vArrays, nVertices, drawMode, indexArray){
 	  // Create a buffer object
