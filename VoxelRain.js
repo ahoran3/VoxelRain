@@ -136,19 +136,20 @@ function draw(){
 	gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 	var viewMatrix = camera.getRotatedViewMatrix(angle);
 	var modelMatrix=new Matrix4();
+	var fallSpeed = 0.01;
 
 	for (var z=0; z<N[2]; z++)
 		for (var y=0; y<N[1]; y++)
 			for (var x=0; x<N[0]; x++){
 				modelMatrix.setTranslate(x*delta, y*delta, z*delta)
-				           .translate(center[0],center[1],center[2])
+				           .translate(center[0],((y*delta) > 0) ? height*fallSpeed:0,center[2])
 						   .rotate(1,0,1,1)
-						   .translate(-center[0],height*-center[1],-center[2]);
+						   .translate(-center[0], ((y*delta) > 0) ? height*fallSpeed:0, -center[2]);
 				model.draw(projMatrix, viewMatrix, modelMatrix);
 			}
 	angle++;
 	if (angle > 360) angle -= 360;
-	height--;
+	if (height > 0) height--;
 	window.requestAnimationFrame(draw);
 		
 }//end draw
