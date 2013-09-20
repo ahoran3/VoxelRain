@@ -64,7 +64,7 @@ function mainFunction(){
 		var low = i;
 		rand = Math.random();
 		rand = rand*(high-(low)) + low;
-		addMessage("new random # " + rand.toFixed(decimalspots));
+		//addMessage("new random # " + rand.toFixed(decimalspots));
 	}
 
 // How many objects along x, y and z
@@ -120,8 +120,9 @@ function draw(){
 		//code to make a new cube at a random position goes here
 		//generateNewCube();
 
-		randomNumber(0,10,1);
-		addMessage("Simulated Cube Generated with random value " + rand.toFixed(1));
+		var randX = Math.random();
+		var randZ = Math.random();
+		addMessage("Simulated Cube Generated with random location " + "\n(" + randX.toFixed(1) + ", 0.0, " + randZ.toFixed(1) + ")");//rand.toFixed(1));
 		//use push and shift on the arrays to add new cubes 
 		//and remove cubes that should no longer be falling 
 		//into the static cube array.
@@ -145,7 +146,8 @@ function draw(){
 						   .translate(-center[0],height*-center[1],-center[2]);
 				model.draw(projMatrix, viewMatrix, modelMatrix);
 			}
-	angle++; if (angle > 360) angle -= 360;
+	angle++;
+	if (angle > 360) angle -= 360;
 	height--;
 	window.requestAnimationFrame(draw);
 		
