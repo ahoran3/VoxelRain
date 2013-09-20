@@ -1,3 +1,28 @@
+// Jonathan Cools-Lartigue, Brandon Forster
+// Matt Hansen, Alex Horan
+// CAP 4720- Project 1
+// 24 September 2013
+
+
+var randR = null;
+var randB = null;
+var randG = null;
+function randomColor(i,j,decimalspots){
+        //written with var assignments in between Math.random calls on purpose.
+        //Since random is based on time, putting time wasters in between random calls
+        //gives RGB values more variance. Will explain in person.
+        randR = Math.random();
+        var high = j;
+        randG = (Math.random());
+        var low = i;
+        randB = (Math.random());
+        randR = randR*(high-(low)) + low;
+        randG = randG*(high-(low)) + low;
+        randB = randB*(high-(low)) + low;
+    }
+
+randomColor(0,1,0);
+
 var cubemesh = {
   vertexPositions : [
     // Front face
@@ -37,6 +62,32 @@ var cubemesh = {
     -1.0,  1.0, -1.0
   ],
   vertexColors :[
+    randR, randG, randB+.05,
+    randR, randG, randB+.05,
+    randR, randG, randB+.05,
+    randR, randG, randB+.05,
+    randR, randG, randB,
+    randR, randG, randB,
+    randR, randG, randB,
+    randR, randG, randB,
+    randR, randG+.05, randB,
+    randR, randG+.05, randB,
+    randR, randG+.05, randB,
+    randR, randG+.05, randB,
+    randR+.05, randG, randB,
+    randR+.05, randG, randB,
+    randR+.05, randG, randB,
+    randR+.05, randG, randB,
+    randR, randG+.05, randB+.05,
+    randR, randG+.05, randB+.05,
+    randR, randG+.05, randB+.05,
+    randR, randG+.05, randB+.05,
+    randR, randG+.05, randB,
+    randR, randG+.05, randB,
+    randR, randG+.05, randB,
+    randR, randG+.05, randB,
+    randR, randG, randB
+    /*
     1.0,  1.0,  1.0,    // Front face: white
 	1.0,  1.0,  1.0,
 	1.0,  1.0,  1.0,
@@ -61,6 +112,7 @@ var cubemesh = {
 	1.0,  0.0,  1.0,
 	1.0,  0.0,  1.0,
 	1.0,  0.0,  1.0
+    */
   ],
   indices : [
     0,  1,  2,      0,  2,  3,    // front
