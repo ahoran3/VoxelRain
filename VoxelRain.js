@@ -122,7 +122,7 @@ function draw(){
 
 		var randX = Math.random();
 		var randZ = Math.random();
-		addMessage("Simulated Cube Generated with random location " + "\n(" + randX.toFixed(1) + ", 0.0, " + randZ.toFixed(1) + ")");//rand.toFixed(1));
+		addMessage("Simulated Cube Generated with random location " + "\n(" + randX.toFixed(1) + ", <y>, " + randZ.toFixed(1) + ")");//rand.toFixed(1));
 		//use push and shift on the arrays to add new cubes 
 		//and remove cubes that should no longer be falling 
 		//into the static cube array.
@@ -141,15 +141,15 @@ function draw(){
 	for (var z=0; z<N[2]; z++)
 		for (var y=0; y<N[1]; y++)
 			for (var x=0; x<N[0]; x++){
-				modelMatrix.setTranslate(x*delta, y*delta, z*delta)
-				           .translate(center[0],((y*delta) > 0) ? height*fallSpeed:0,center[2])
+				modelMatrix.setTranslate(x*delta, y*delta, z*delta) // todo - scenebounds vs height array
+				           .translate(center[0], ((y*delta) > sceneBounds.min[1]) ? height*fallSpeed:0, center[2])
 						   .rotate(1,0,1,1)
-						   .translate(-center[0], ((y*delta) > 0) ? height*fallSpeed:0, -center[2]);
+						   .translate(-center[0], ((y*delta) > sceneBounds.min[1]) ? height*fallSpeed:0, -center[2]);
 				model.draw(projMatrix, viewMatrix, modelMatrix);
 			}
 	angle++;
 	if (angle > 360) angle -= 360;
-	if (height > 0) height--;
+	if (height > 0) height--; // todo - this should be an array?
 	window.requestAnimationFrame(draw);
 		
 }//end draw
