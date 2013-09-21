@@ -3,7 +3,8 @@
 // CAP 4720- Project 1
 // 24 September 2013
 
-function RenderableModel(gl,model){
+function RenderableModel(gl,model,height){	
+	var currHeight = height;
 	function Drawable(vArrays, nVertices, drawMode, indexArray){
 	  // Create a buffer object
 	  var vertexBuffers=[];
@@ -133,6 +134,14 @@ function RenderableModel(gl,model){
 						:modelTransformations[i].elements);
 			drawables[i].draw(a_Locations);
 		}
+	}
+	this.decrHeight = function()
+	{
+		return currHeight--;
+	}
+	this.getHeight = function() 
+	{
+		return currHeight;
 	}
 	this.getBounds=function() // Computes Model bounding box
 	{		
