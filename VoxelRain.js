@@ -136,11 +136,23 @@ function mainFunction() {
             var newYval = rand;
 
             staticXcoords[staticObjects.length] = newXval;
-            staticYcoords[staticObjects.length] = newYval + (delta * cubeGrid[2]);
             staticZcoords[staticObjects.length] = newZval;
 
-            //use push on the array to add newly generated cubes 
+            //default to delta
+            staticYcoords[staticObjects.length] = delta;
 
+            //collision detection for stacking; doesn't work on first object
+            if (staticObjects.length > 0) {
+                for (var i = 0; i < staticObjects.length; i++) {
+                    //if a cube exists at this point already
+                    if ((staticXcoords[staticObjects.length] == staticXcoords[i]) &&
+						(staticZcoords[staticObjects.length] == staticZcoords[i])) {
+                        staticYcoords[staticObjects.length] = (staticYcoords[i] + delta);
+                    }
+                }
+            }
+
+            //use push on the array to add newly generated cubes 
             fallingObjects.push(model);
             addMessage("New model added to canvas with coordinates (" + newXval + "," + startHeight + "," + newZval + "). \nNumber of models in fallingObjects = " + fallingObjects.length + ". \nNumber of staticObjects = " + staticObjects.length + "\n");
 
@@ -179,7 +191,7 @@ function mainFunction() {
         //draw all the static objects
         for (s = 0; s < staticObjects.length; s++) {
             //set translation for static cubes
-            staticModelMatrix.setTranslate(staticXcoords[s] * delta, delta, staticZcoords[s] * delta) // todo - scenebounds vs height array --explain
+            staticModelMatrix.setTranslate(staticXcoords[s] * delta, staticYcoords[s], staticZcoords[s] * delta) // todo - scenebounds vs height array --explain
                .translate(center[0], 0, center[2])
                .rotate(1, 0, 1, 1)
                .translate(-center[0], 0, -center[2]);
