@@ -11,11 +11,12 @@ var messageField = null;
 var rand = null;
 var generationTime = 0; //first object should fall instantly 
 
+
 function setupMessageArea() {
 		messageField = document.getElementById("messageArea");
 		document.getElementById("messageClear").setAttribute("onclick","messageField.value='';");
 }
-	
+
 function setupMenu(){
 	var menuItemList = ["cubes","teapots","skulls"]; // Some list. May be list of objects to render.
 	var m = document.getElementById("menu");
@@ -35,7 +36,7 @@ function addMessage(message){
 function menuHandler(){
 	var m = document.getElementById("menu");
 	modelId = m.selectedIndex;
-	addMessage(m.options[modelId].text);
+	addMessage("Selected index " + m.selectedIndex+ " :" + m.options[modelId].text);
 }
 
 function getObject(){
@@ -50,7 +51,7 @@ function getObject(){
 function mainFunction(){
 	setupMessageArea();
 	setupMenu();
-	
+
 	canvas = document.getElementById('myCanvas'); 	
 	addMessage(((canvas)?"Canvas acquired":"Error: Can not acquire canvas"));
 	gl = getWebGLContext(canvas);
@@ -63,52 +64,31 @@ function mainFunction(){
 		var high = j;
 		var low = i;
 		rand = Math.random();
-		rand = rand*(high-(low)) + low;
-		//addMessage("new random # " + rand.toFixed(decimalspots));
+		rand = (rand*(high-(low)) + low).toFixed(decimalspots);
 	}
 
 // How many objects along x, y and z
 var fallingObjects = new Array();
 var staticObjects = new Array();
-var N = [2, 2, 2]; 
+var cubeGrid = [9,9,9]; //number of objects in each direction x,y,z
 var angle = 0;
-var height = 100;
+var startHeight = 100;
+var camera = null;
+var projMatrix = null;
+var center = null;
+var delta = null;
+var modelbounds = null;
+var fallSpeed = 0.1;
+var height = 900;
+
 
 function draw(){
 	getObject();
-	
-	var model = new RenderableModel(gl,modelObject);
 
-	var modelbounds = model.getBounds();
-
-	//max diameter of the model object
-	var delta = Math.max(
-	    modelbounds.max[0]-modelbounds.min[0],
-	    modelbounds.max[1]-modelbounds.min[1],
-		modelbounds.max[2]-modelbounds.min[2]
-		);
-
-	var center = [
-	    0.5*(modelbounds.max[0]+modelbounds.min[0]),
-	    0.5*(modelbounds.max[1]+modelbounds.min[1]),
-		0.5*(modelbounds.max[2]+modelbounds.min[2])
-	];
-
-	//determines the zoom
-	var sceneBounds={};
-	sceneBounds.min = [modelbounds.min[0],modelbounds.min[1],modelbounds.min[2]]; // clone
-	sceneBounds.max = [
-		modelbounds.min[0]+N[0]*delta,
-	    modelbounds.min[1]+N[1]*delta,
-		modelbounds.min[2]+N[2]*delta
-	];
-	var camera = new Camera(gl,sceneBounds,[0,1,0]);
-	var projMatrix = camera.getProjMatrix();
-	
-	//get ready to make new cube or decrement CubeCounter
+		//get ready to make new cube or decrement CubeCounter
 	if(generationTime == 0){
 		makeCube = true;
-		generationTime = 50;
+		generationTime = 100;
 	}
 	else {
 		generationTime--;
@@ -118,40 +98,99 @@ function draw(){
 	//if time to make a new cube, make a new one
 	if(makeCube){
 		//code to make a new cube at a random position goes here
-		//generateNewCube();
+		randomNumber(0,9,0);
+		var newXval = rand;
+		randomNumber(0,9,0);
+		var newZval = rand;
+		randomNumber(0,startHeight,0);
+		var newYval = rand;
 
-		var randX = Math.random();
-		var randZ = Math.random();
-		addMessage("Simulated Cube Generated with random location " + "\n(" + randX.toFixed(1) + ", <y>, " + randZ.toFixed(1) + ")");//rand.toFixed(1));
-		//use push and shift on the arrays to add new cubes 
-		//and remove cubes that should no longer be falling 
-		//into the static cube array.
-		fallingObjects.push();
 
-		//if(falling object's position lowest it can go) 
-		//move the object from the falling array to the static array
-		staticObjects.push(fallingObjects.shift());
+		var model = new RenderableModel(gl,modelObject,startHeight);
+
+		modelbounds = model.getBounds();
+
+
+		//use push on the array to add newly generated cubes 
+	
+		fallingObjects.push(model);
+		addMessage("New model added to canvas with coordinates (" + newXval+ ","+startHeight+"," + newZval +"). \nNumber of models in fallingObjects = " + fallingObjects.length + ". \nNumber of staticObjects = " + staticObjects.length+"\n");
+	
 	}
+
+
+	//max diameter of the model object
+	delta = Math.max(
+	    modelbounds.max[0]-modelbounds.min[0],
+	    modelbounds.max[1]-modelbounds.min[1],
+		modelbounds.max[2]-modelbounds.min[2]
+		);
+
+	center = [
+	    0.5*(modelbounds.max[0]+modelbounds.min[0]),
+	    0.5*(modelbounds.max[1]+modelbounds.min[1]),
+		0.5*(modelbounds.max[2]+modelbounds.min[2])
+	];
+
+	//determines the zoom
+	var sceneBounds={};
+	sceneBounds.min = [modelbounds.min[0],modelbounds.min[1],modelbounds.min[2]]; // clone
+	sceneBounds.max = [
+		modelbounds.min[0]+cubeGrid[0]*delta,
+	  	modelbounds.min[1]+cubeGrid[1]*delta,
+	  	modelbounds.min[2]+cubeGrid[2]*delta
+	];
+	
+	camera = new Camera(gl,sceneBounds,[0,1,0]);
+	projMatrix = camera.getProjMatrix();
 
 	gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
 	var viewMatrix = camera.getRotatedViewMatrix(angle);
-	var modelMatrix=new Matrix4();
-	var fallSpeed = 0.01;
+	var fallingModelMatrix = new Matrix4();
+	var staticModelMatrix = new Matrix4();
 
-	for (var z=0; z<N[2]; z++)
-		for (var y=0; y<N[1]; y++)
-			for (var x=0; x<N[0]; x++){
-				modelMatrix.setTranslate(x*delta, y*delta, z*delta) // todo - scenebounds vs height array
-				           .translate(center[0], ((y*delta) > sceneBounds.min[1]) ? height*fallSpeed:0, center[2])
-						   .rotate(1,0,1,1)
-						   .translate(-center[0], ((y*delta) > sceneBounds.min[1]) ? height*fallSpeed:0, -center[2]);
-				model.draw(projMatrix, viewMatrix, modelMatrix);
-			}
+	//draw all the falling objects
+	for(var f = 0; f < fallingObjects.length; f++){
+		//set translation for falling objects
+		fallingModelMatrix.setTranslate(1*delta, 2*delta, 1*delta) // todo - scenebounds vs height array -- explain
+	           .translate(center[0], ((2*delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight()*fallSpeed:0, center[2])
+			   .rotate(1,0,1,1)
+			   .translate(-center[0], ((2*delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight()*fallSpeed:0, -center[2]);
+
+		//draw all objects in the falling objects array
+		fallingObjects[f].draw(projMatrix, viewMatrix, fallingModelMatrix);
+
+		//move the object from the falling array to the static array
+		//remove cubes that should no longer be falling 
+		//from the falling array into the static cube array.
+		if(fallingObjects[f].getHeight() == 0){
+			staticObjects.push(fallingObjects.shift());
+			
+		}
+		else{
+			fallingObjects[f].decrHeight();
+			//addMessage("object #"+f+" has current height :" +fallingObjects[f].getHeight());
+		}
+	}
+
+	//set translation for static cubes
+	staticModelMatrix.setTranslate(1*delta, 2*delta, 2*delta) // todo - scenebounds vs height array --explain
+       .translate(center[0], 0, center[2])
+	   .rotate(1,0,1,1)
+	   .translate(-center[0], 0, -center[2]);
+
+	//draw all the static objects
+	for(var s = 0; s < staticObjects.length; s++){
+		//draw all objects in the static objects array
+		staticObjects[s].draw(projMatrix, viewMatrix, staticModelMatrix);
+
+	}
+
 	angle++;
 	if (angle > 360) angle -= 360;
-	if (height > 0) height--; // todo - this should be an array?
+	//if (height > 0) height--; // todo - this should be an array? --explain
 	window.requestAnimationFrame(draw);
-		
+
 }//end draw
 
 gl.clearColor(0,0,0,1);
