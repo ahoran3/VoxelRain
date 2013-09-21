@@ -70,15 +70,16 @@ function mainFunction(){
 // How many objects along x, y and z
 var fallingObjects = new Array();
 var staticObjects = new Array();
-var cubeGrid = [9,10,9]; //number of objects in each direction
+var cubeGrid = [9,9,9]; //number of objects in each direction x,y,z
 var angle = 0;
-var startHeight = 200;
+var startHeight = 100;
 var camera = null;
 var projMatrix = null;
 var center = null;
 var delta = null;
 var modelbounds = null;
-var fallSpeed = 0.05;
+var fallSpeed = 0.1;
+var height = 900;
 
 
 function draw(){
@@ -97,26 +98,24 @@ function draw(){
 	//if time to make a new cube, make a new one
 	if(makeCube){
 		//code to make a new cube at a random position goes here
-		//generateNewCube();
+		randomNumber(0,9,0);
+		var newXval = rand;
+		randomNumber(0,9,0);
+		var newZval = rand;
+		randomNumber(0,startHeight,0);
+		var newYval = rand;
 
-		var model = new RenderableModel(gl,modelObject);
+
+		var model = new RenderableModel(gl,modelObject,startHeight);
 
 		modelbounds = model.getBounds();
 
-		randomNumber(0,9,0);
-		var newXval = rand;
-		//assign number to new cube's x coordinate
-		randomNumber(0,9,0);
-		var newZval = rand;
-		//assign rand to new cubes' z coordinate
-		//use push and shift on the arrays to add new cubes 
-		//and remove cubes that should no longer be falling 
-		//into the static cube array.
+
+		//use push on the array to add newly generated cubes 
+	
 		fallingObjects.push(model);
 		addMessage("New model added to canvas with coordinates (" + newXval+ ","+startHeight+"," + newZval +"). \nNumber of models in fallingObjects = " + fallingObjects.length + ". \nNumber of staticObjects = " + staticObjects.length+"\n");
-		//if(falling object's position lowest it can go) 
-		//move the object from the falling array to the static array
-		//staticObjects.push(fallingObjects.shift());
+	
 	}
 
 
@@ -150,29 +149,46 @@ function draw(){
 	var fallingModelMatrix = new Matrix4();
 	var staticModelMatrix = new Matrix4();
 
-	fallingModelMatrix.setTranslate(1*delta, 2*delta, 1*delta) // todo - scenebounds vs height array -- explain
-			           .translate(center[0], ((2*delta) > sceneBounds.min[1]) ? startHeight*fallSpeed:0, center[2])
-					   .rotate(1,0,1,1)
-					   .translate(-center[0], ((2*delta) > sceneBounds.min[1]) ? startHeight*fallSpeed:0, -center[2]);
-	
-	staticModelMatrix.setTranslate(1*delta, 2*delta, 2*delta) // todo - scenebounds vs height array --explain
-			           .translate(center[0], 0, center[2])
-					   .rotate(1,0,1,1)
-					   .translate(-center[0], 0, -center[2]);
-
 	//draw all the falling objects
 	for(var f = 0; f < fallingObjects.length; f++){
-				fallingObjects[f].draw(projMatrix, viewMatrix, fallingModelMatrix);
+		//set translation for falling objects
+		fallingModelMatrix.setTranslate(1*delta, 2*delta, 1*delta) // todo - scenebounds vs height array -- explain
+	           .translate(center[0], ((2*delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight()*fallSpeed:0, center[2])
+			   .rotate(1,0,1,1)
+			   .translate(-center[0], ((2*delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight()*fallSpeed:0, -center[2]);
+
+		//draw all objects in the falling objects array
+		fallingObjects[f].draw(projMatrix, viewMatrix, fallingModelMatrix);
+
+		//move the object from the falling array to the static array
+		//remove cubes that should no longer be falling 
+		//from the falling array into the static cube array.
+		if(fallingObjects[f].getHeight() == 0){
+			staticObjects.push(fallingObjects.shift());
+			
+		}
+		else{
+			fallingObjects[f].decrHeight();
+			//addMessage("object #"+f+" has current height :" +fallingObjects[f].getHeight());
+		}
 	}
+
+	//set translation for static cubes
+	staticModelMatrix.setTranslate(1*delta, 2*delta, 2*delta) // todo - scenebounds vs height array --explain
+       .translate(center[0], 0, center[2])
+	   .rotate(1,0,1,1)
+	   .translate(-center[0], 0, -center[2]);
 
 	//draw all the static objects
 	for(var s = 0; s < staticObjects.length; s++){
-				staticObjects[s].draw(projMatrix, viewMatrix, staticModelMatrix);
+		//draw all objects in the static objects array
+		staticObjects[s].draw(projMatrix, viewMatrix, staticModelMatrix);
+
 	}
 
 	angle++;
 	if (angle > 360) angle -= 360;
-	if (startHeight > 0) startHeight--; // todo - this should be an array? --explain
+	//if (height > 0) height--; // todo - this should be an array? --explain
 	window.requestAnimationFrame(draw);
 
 }//end draw
