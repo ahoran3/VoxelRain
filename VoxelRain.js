@@ -11,9 +11,9 @@ var messageField = null;
 var rand = null;
 var generationTime = 0; //first object should fall instantly
 
-var GRID_SIZE_X = 4; // global constants used for quick debugging
+var GRID_SIZE_X = 9; // global constants used for quick debugging
 var GRID_SIZE_Y = 9; // note: this will be used in an array
-var GRID_SIZE_Z = 4; // so a grid size of 9 is actually 10x10
+var GRID_SIZE_Z = 9; // so a grid size of 9 is actually 10x10
 
 function setupMessageArea() {
     messageField = document.getElementById("messageArea");
@@ -84,13 +84,13 @@ function mainFunction() {
     var zSpot=0;
     var gridHeight = new Array();
     var angle = 0;
-    var startHeight = 100;
+    var startHeight = 10;
     var camera = null;
     var projMatrix = null;
     var center = null;
     var delta = null;
     var modelbounds = null;
-    var fallSpeed = 0.1;
+    var fallSpeed = 0.5;
 
     //initialize the grid height    
     for(xSpot=0;xSpot<=GRID_SIZE_X; xSpot++){
@@ -100,15 +100,16 @@ function mainFunction() {
         }
     }
 	
-    function writeHeightMap(numCubes) {
+    function writeHeightMap(numObjs) {
         heightMap.value = "_";
         for(xSpot=0;xSpot<=GRID_SIZE_X; xSpot++)
             for(zSpot=0;zSpot<=GRID_SIZE_Z; zSpot++)
-                heightMap.value += ""+gridHeight[xSpot][zSpot] + ((zSpot==GRID_SIZE_Z)? "\n" : "_");
-        heightMap.value+="Number of Objects: "+ numCubes;
+                heightMap.value += ""+gridHeight[xSpot][zSpot] + ((zSpot==GRID_SIZE_Z)? "\n_" : "_");
+        heightMap.value+="Number of Objects: "+ numObjs;
                 
     }
-    var model = new RenderableModel(gl, cubeObject, 0);
+    getObject();
+    var model = new RenderableModel(gl, modelObject, 0);
     modelbounds = model.getBounds();
 
     //max diameter of the model object
@@ -137,11 +138,11 @@ function mainFunction() {
     projMatrix = camera.getProjMatrix();
 
     function draw() {
-
+        
         //get ready to make new cube or decrement CubeCounter
         if (generationTime == 0) {
             makeCube = true;
-            generationTime = 50;
+            generationTime = 30;
         }
         else {
             generationTime--;
@@ -156,21 +157,21 @@ function mainFunction() {
             randomNumber(0, GRID_SIZE_Z, 0);
             var newZval = rand;
 
-            //randomNumber(0, startHeight, 0);
-            //var newYval = rand;
+            getObject();
+            model = new RenderableModel(gl, modelObject, 0);
 			model.setHeight(startHeight);
 			
             staticXcoords[staticObjects.length] = newXval;
             staticZcoords[staticObjects.length] = newZval;
-
+            
             //default to delta
             staticYcoords[staticObjects.length] = delta;
 
             //collision detection for stacking; doesn't work on first object
             //changed to work on first object so that the gridHeight is consistent
             //otherwise gridHeight is alwasy one cube height behind
-            if (staticObjects.length >= 0) {
-                for (var i = 0; i <= staticObjects.length; i++) {
+            if(staticObjects.length >= 0) {
+                for (var i = 0; i <= staticObjects.length; i++) { //should create some lookup function for how high the cubeneeds to land. I think this is the main reason it runs slow the more cubes are generated.
                     //if a cube exists at this point already
                     if ((staticXcoords[staticObjects.length] == staticXcoords[i]) &&
 						(staticZcoords[staticObjects.length] == staticZcoords[i])) {
@@ -178,6 +179,7 @@ function mainFunction() {
                     }
                 }
             }
+
 
             //use push on the array to add newly generated cubes 
             fallingObjects.push(model);
@@ -235,7 +237,7 @@ function mainFunction() {
 
     }//end draw
 
-    gl.clearColor(0, 0, 0, 1);
+    gl.clearColor(1, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
 
     draw();
