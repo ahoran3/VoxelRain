@@ -21,19 +21,43 @@
   </head>
 
   <body onLoad="mainFunction()" bgcolor = 'gold'>
-    
+    <table>
+    <tr>
+    <td>    
     <h2>Voxel Rain</h2>
+    </td>
+    </td>
+    <td>
     <h5>Jonathan Cools-Lartigue, Brandon Forster, Matt Hansen, and Alex Horan</h5>
+    </td>
+    </tr>    
+
+    <tr>
+    <td rowspan = "2">
     <canvas id="myCanvas" width="800px" height="500px" style="border:1px solid #FFFFFF; background: blue"></canvas>
-    <textarea id="messageArea" rows="31" cols="40" style = "background: lightgrey "></textarea>
-    <button type="button" id="messageClear">clear message</button><br/>
+    </td>
+    <td>
+    <textarea id="HeightMap" rows="11" cols="40" style = "background: lightgrey "></textarea>
+    </tr>
+
+    <tr>
+    <td>
+    <textarea id="messageArea" rows="19" cols="40" style = "background: lightgrey "></textarea>
+    </td>
+    </tr>
     
+    <tr>
+    <td>
     <select id="menu" onchange="menuHandler();"></select>
-    <br/>  
-    
     <input type="radio" name="renderingMode" value="wireframe" onclick = "setRenderWire()" onchange="setRenderMode(this);">wireframe
     <input type="radio" name="renderingMode" value="solid" onclick = "setRenderSolid()"onchange="setRenderMode(this);">solid<br/>
     <input type="file" onchange="loadFile(this.files);">
     <p id="output"/>
+    </td>
+    <td>
+    <button type="button" id="messageClear">clear message</button><br/>
+    </tr>
+    </table>
+
   </body>
 </html>
