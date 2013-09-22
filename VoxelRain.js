@@ -164,7 +164,7 @@ function mainFunction() {
         //draw all the falling objects
         for (var f = 0; f < fallingObjects.length; f++) {
             //set translation for falling objects
-            fallingModelMatrix.setTranslate(1 * delta, 2 * delta, 1 * delta)
+            fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, 2 * delta, staticZcoords[staticObjects.length+f] * delta)
                    .translate(center[0], ((2 * delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, center[2])
                    .rotate(1, 0, 1, 1)
                    .translate(-center[0], ((2 * delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, -center[2]);
