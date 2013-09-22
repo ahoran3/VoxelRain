@@ -143,6 +143,10 @@ function RenderableModel(gl,model,height){
 	{
 		return currHeight;
 	}
+	this.setHeight = function(h) 
+	{
+		currHeight = h;
+	}
 	this.getBounds=function() // Computes Model bounding box
 	{		
 		var xmin, xmax, ymin, ymax, zmin, zmax;
