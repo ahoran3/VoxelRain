@@ -101,10 +101,10 @@ function mainFunction() {
     }
 	
     function writeHeightMap(numCubes) {
-        heightMap.value = "";
+        heightMap.value = "_";
         for(xSpot=0;xSpot<=GRID_SIZE_X; xSpot++)
             for(zSpot=0;zSpot<=GRID_SIZE_Z; zSpot++)
-                heightMap.value += "_"+gridHeight[xSpot][zSpot] + ((zSpot==GRID_SIZE_Z)? "\n" : "_");
+                heightMap.value += ""+gridHeight[xSpot][zSpot] + ((zSpot==GRID_SIZE_Z)? "\n" : "_");
         heightMap.value+="Number of Objects: "+ numCubes;
                 
     }
@@ -175,7 +175,6 @@ function mainFunction() {
                     if ((staticXcoords[staticObjects.length] == staticXcoords[i]) &&
 						(staticZcoords[staticObjects.length] == staticZcoords[i])) {
                         staticYcoords[staticObjects.length] = (staticYcoords[i]+delta/2);
-                        gridHeight[staticXcoords[staticObjects.length]][staticZcoords[staticObjects.length]] +=1;
                     }
                 }
             }
@@ -208,7 +207,7 @@ function mainFunction() {
             //move the object from the falling array to the static array
             if (fallingObjects[f].getHeight() == 0) {
                 staticObjects.push(fallingObjects.shift());
-                //gridHeight[staticZcoords[staticObjects.length]][staticZcoords[staticObjects.length]] += 1;
+                gridHeight[staticXcoords[staticObjects.length-1]][staticZcoords[staticObjects.length-1]] +=1;
             }
             else {
                 fallingObjects[f].decrHeight();
