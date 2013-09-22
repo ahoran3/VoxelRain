@@ -11,6 +11,10 @@ var messageField = null;
 var rand = null;
 var generationTime = 0; //first object should fall instantly
 
+var GRID_SIZE_X = 2; // global constants used for quick debugging
+var GRID_SIZE_Y = 9; // note: this will be used in an array
+var GRID_SIZE_Z = 2; // so a grid size of 9 is actually 10x10
+
 function setupMessageArea() {
     messageField = document.getElementById("messageArea");
     document.getElementById("messageClear").setAttribute("onclick", "messageField.value='';");
@@ -72,7 +76,7 @@ function mainFunction() {
     var staticXcoords = new Array();
     var staticYcoords = new Array();
     var staticZcoords = new Array();
-    var cubeGrid = [9, 9, 9]; //number of objects in each direction x,y,z
+    var cubeGrid = [GRID_SIZE_X, GRID_SIZE_Y, GRID_SIZE_Z]; //number of objects in each direction x,y,z
     var angle = 0;
     var startHeight = 100;
     var camera = null;
@@ -82,7 +86,7 @@ function mainFunction() {
     var modelbounds = null;
     var fallSpeed = 0.1;
     var height = 900;
-
+	
     var model = new RenderableModel(gl, cubeObject, 0);
     modelbounds = model.getBounds();
 
@@ -126,9 +130,9 @@ function mainFunction() {
         //if time to make a new cube, make a new one
         if (makeCube) {
             //code to make a new cube at a random position goes here
-            randomNumber(0, 9, 0);
+            randomNumber(0, GRID_SIZE_X, 0);
             var newXval = rand;
-            randomNumber(0, 9, 0);
+            randomNumber(0, GRID_SIZE_Z, 0);
             var newZval = rand;
             //randomNumber(0, startHeight, 0);
             //var newYval = rand;
@@ -150,10 +154,13 @@ function mainFunction() {
                     }
                 }
             }
-			
+
             //use push on the array to add newly generated cubes 
             fallingObjects.push(model);
-            addMessage("New model added to canvas with coordinates (" + newXval + "," + startHeight + "," + newZval + "). \nNumber of models in fallingObjects = " + fallingObjects.length + ". \nNumber of staticObjects = " + staticObjects.length + "\n");
+            addMessage("New model added to canvas with coordinates (" + newXval + "," + startHeight + "," + 
+				newZval + "). \nCurrent height = " + staticYcoords[staticObjects.length]/2 + // dividing by two gives the number of objects
+				"\nNumber of models in fallingObjects = " + fallingObjects.length + 
+				". \nNumber of staticObjects = " + staticObjects.length + "\n");
 		}
 
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -163,12 +170,17 @@ function mainFunction() {
 
         //draw all the falling objects
         for (var f = 0; f < fallingObjects.length; f++) {
+		
             //set translation for falling objects
-            fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, 2 * delta, staticZcoords[staticObjects.length+f] * delta)
-                   .translate(center[0], ((2 * delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, center[2])
+            fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, staticYcoords[staticObjects.length+f] * delta, staticZcoords[staticObjects.length+f] * delta)
+                   .translate(center[0], ((staticYcoords[staticObjects.length+f]) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, center[2])
                    .rotate(1, 0, 1, 1)
-                   .translate(-center[0], ((2 * delta) > sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, -center[2]);
-
+                   .translate(-center[0], ((staticYcoords[staticObjects.length+f]) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, -center[2]);
+			// fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, 2 * delta, staticZcoords[staticObjects.length+f] * delta)
+                   // .translate(center[0], ((2 * delta) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, center[2])
+                   // .rotate(1, 0, 1, 1)
+                   // .translate(-center[0], ((2 * delta) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, -center[2]);
+				   
             //draw all objects in the falling objects array
             fallingObjects[f].draw(projMatrix, viewMatrix, fallingModelMatrix);
 
