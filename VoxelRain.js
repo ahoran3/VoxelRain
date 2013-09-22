@@ -172,7 +172,7 @@ function mainFunction() {
         for (var f = 0; f < fallingObjects.length; f++) {
 		
             //set translation for falling objects
-            fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, staticYcoords[staticObjects.length+f] * delta, staticZcoords[staticObjects.length+f] * delta)
+            fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, staticYcoords[staticObjects.length+f]/2 * delta, staticZcoords[staticObjects.length+f] * delta)
                    .translate(center[0], ((staticYcoords[staticObjects.length+f]) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, center[2])
                    .rotate(1, 0, 1, 1)
                    .translate(-center[0], ((staticYcoords[staticObjects.length+f]) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, -center[2]);
