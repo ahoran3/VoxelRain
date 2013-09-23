@@ -1,10 +1,4 @@
-// Jonathan Cools-Lartigue, Brandon Forster
-// Matt Hansen, Alex Horan
-// CAP 4720- Project 1
-// 24 September 2013
-
-function RenderableModel(gl,model,height){	
-	var currHeight = height;
+function RenderableModel(gl,model){
 	function Drawable(vArrays, nVertices, drawMode, indexArray){
 	  // Create a buffer object
 	  var vertexBuffers=[];
@@ -134,18 +128,6 @@ function RenderableModel(gl,model,height){
 						:modelTransformations[i].elements);
 			drawables[i].draw(a_Locations);
 		}
-	}
-	this.decrHeight = function()
-	{
-		return currHeight--;
-	}
-	this.getHeight = function() 
-	{
-		return currHeight;
-	}
-	this.setHeight = function(h) 
-	{
-		currHeight = h;
 	}
 	this.getBounds=function() // Computes Model bounding box
 	{		
