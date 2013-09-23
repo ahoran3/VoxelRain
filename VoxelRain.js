@@ -11,9 +11,14 @@ var messageField = null;
 var rand = null;
 var generationTime = 0; //first object should fall instantly
 
-var GRID_SIZE_X = 9; // global constants used for quick debugging
-var GRID_SIZE_Y = 9; // note: this will be used in an array
-var GRID_SIZE_Z = 9; // so a grid size of 9 is actually 10x10
+var GRID_SIZE_X = 10; // global constants used for quick debugging
+var GRID_SIZE_Y = 16; // note: this will be used in an array
+var GRID_SIZE_Z = 10; // so a grid size of 9 is actually 10x10
+
+var scene = null;
+var cubeScene = null;
+var teapotScene = null ;
+var skullScene = null;
 
 function setupMessageArea() {
     messageField = document.getElementById("messageArea");
@@ -39,8 +44,30 @@ function addMessage(message) {
 
 function menuHandler() {
     var m = document.getElementById("menu");
-    modelId = m.selectedIndex;
-    addMessage("Selected index " + m.selectedIndex + " :" + m.options[modelId].text);
+    var index = m.selectedIndex;
+    
+    if  (index == 0)
+        {
+        
+        scene = cubeScene;
+        
+        }
+    
+    else if (index == 1)
+        {
+        
+        scene = teapotScene;
+        
+        }
+    else
+        {
+        
+        scene = skullScene;
+        
+        }
+    
+    addMessage("Selected index " + index + " :" + m.options[index].text);
+    
 }
 
 function getObject() {
@@ -55,12 +82,12 @@ function getObject() {
 function mainFunction() {
     setupMessageArea();
     setupMenu();
-
+    
     canvas = document.getElementById('myCanvas');
     addMessage(((canvas) ? "Canvas acquired" : "Error: Can not acquire canvas"));
     gl = getWebGLContext(canvas);
     console.log("done");
-
+    
     //generates a random number between i and j 
     //up to any number of deciaml spots.
     //can be used for random colors and random positions
@@ -70,176 +97,96 @@ function mainFunction() {
         rand = Math.random();
         rand = (rand * (high - (low)) + low).toFixed(decimalspots);
     }
-
-
-
-    // How many objects along x, y and z
-    var fallingObjects = new Array();
-    var staticObjects = new Array();
-    var staticXcoords = new Array();
-    var staticYcoords = new Array();
-    var staticZcoords = new Array();
-    var cubeGrid = [GRID_SIZE_X, GRID_SIZE_Y, GRID_SIZE_Z]; //number of objects in each direction x,y,z'
-    var xSpot=0;
-    var zSpot=0;
+    
+    var N = [GRID_SIZE_X, GRID_SIZE_Y, GRID_SIZE_Z]; 
+    
     var gridHeight = new Array();
-    var angle = 0;
-    var startHeight = 10;
-    var camera = null;
-    var projMatrix = null;
-    var center = null;
-    var delta = null;
-    var modelbounds = null;
-    var fallSpeed = 0.5;
-
-    //initialize the grid height    
-    for(xSpot=0;xSpot<=GRID_SIZE_X; xSpot++){
-        gridHeight[xSpot] = new Array();
-        for(zSpot=0;zSpot<=GRID_SIZE_Z; zSpot++){
-            gridHeight[xSpot][zSpot]=0;
-        }
-    }
-	
-    function writeHeightMap(numObjs) {
-        heightMap.value = "_";
-        for(xSpot=0;xSpot<=GRID_SIZE_X; xSpot++)
-            for(zSpot=0;zSpot<=GRID_SIZE_Z; zSpot++)
-                heightMap.value += ""+gridHeight[xSpot][zSpot] + ((zSpot==GRID_SIZE_Z)? "\n_" : "_");
-        heightMap.value+="Number of Objects: "+ numObjs;
-                
-    }
-    getObject();
-    var model = new RenderableModel(gl, modelObject, 0);
-    modelbounds = model.getBounds();
-
-    //max diameter of the model object
-    delta = Math.max(
-	    modelbounds.max[0] - modelbounds.min[0],
-	    modelbounds.max[1] - modelbounds.min[1],
-		modelbounds.max[2] - modelbounds.min[2]
-		);
-
-    center = [
-	    0.5 * (modelbounds.max[0] + modelbounds.min[0]),
-	    0.5 * (modelbounds.max[1] + modelbounds.min[1]),
-		0.5 * (modelbounds.max[2] + modelbounds.min[2])
-    ];
-
-    //determines the zoom
-    var sceneBounds = {};
-    sceneBounds.min = [modelbounds.min[0], modelbounds.min[1], modelbounds.min[2]]; // clone
-    sceneBounds.max = [
-		modelbounds.min[0] + cubeGrid[0] * delta,
-	  	modelbounds.min[1] + cubeGrid[1] * delta,
-	  	modelbounds.min[2] + cubeGrid[2] * delta
-    ];
-
-    camera = new Camera(gl, sceneBounds, [0, 1, 0]);
-    projMatrix = camera.getProjMatrix();
-
-    function draw() {
+    
+    for(var z = 0; z < GRID_SIZE_Z; z++)
+        {
         
-        //get ready to make new cube or decrement CubeCounter
-        if (generationTime == 0) {
-            makeCube = true;
-            generationTime = 30;
-        }
-        else {
-            generationTime--;
-            makeCube = false;
-        }
-
-        //if time to make a new cube, make a new one
-        if (makeCube) {
-            //code to make a new cube at a random position goes here
-            randomNumber(0, GRID_SIZE_X, 0);
-            var newXval = rand;
-            randomNumber(0, GRID_SIZE_Z, 0);
-            var newZval = rand;
-
-            getObject();
-            model = new RenderableModel(gl, modelObject, 0);
-			model.setHeight(startHeight);
-			
-            staticXcoords[staticObjects.length] = newXval;
-            staticZcoords[staticObjects.length] = newZval;
+        gridHeight[z] = new Array();
+        
+        for (var x = 0; x < GRID_SIZE_X; x++){
             
-            //default to delta
-            staticYcoords[staticObjects.length] = delta;
-
-            //collision detection for stacking; doesn't work on first object
-            //changed to work on first object so that the gridHeight is consistent
-            //otherwise gridHeight is alwasy one cube height behind
-            if(staticObjects.length >= 0) {
-                for (var i = 0; i <= staticObjects.length; i++) { //should create some lookup function for how high the cubeneeds to land. I think this is the main reason it runs slow the more cubes are generated.
-                    //if a cube exists at this point already
-                    if ((staticXcoords[staticObjects.length] == staticXcoords[i]) &&
-						(staticZcoords[staticObjects.length] == staticZcoords[i])) {
-                        staticYcoords[staticObjects.length] = (staticYcoords[i]+delta/2);
+            gridHeight[z][x] = new Array();
+                        
+        }
+        
+        }
+    
+    var angle=0;
+    
+    var timer = 0;
+    
+    cubeScene = new renderableScene(gl, cubeObject, N);
+    
+    teapotScene = new renderableScene(gl, teapotObject, N);
+    
+    skullScene = new renderableScene(gl, skullObject, N);
+    
+    scene = cubeScene;
+    
+    function draw()
+        {
+        
+        gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+        var viewMatrix = scene.camera.getRotatedViewMatrix(angle);
+        var modelMatrix=new Matrix4();
+        
+        for (var z=0; z<gridHeight.length; z++)
+            
+            for (var x=0; x<gridHeight[z].length; x++)
+                
+                for (var y=0; y<gridHeight[z][x].length; y++)
+                    {
+                    
+                    var offset = gridHeight[z][x][y]; 
+                    
+                    modelMatrix.setTranslate(x*scene.delta, (offset + y)*scene.delta, z*scene.delta)
+                        //.translate(scene.center[0],scene.center[1],scene.center[2])
+                        //.rotate(angle*(x+y+z),0,1,1)
+                        //.translate(-scene.center[0],-scene.center[1],-scene.center[2]);
+                        scene.model.draw(scene.projMatrix, viewMatrix, modelMatrix);
+                    
+                    if (offset != 0)
+                        {
+                        
+                        gridHeight[z][x][y] = offset - 0.5;
+                        
+                        }
+                    
                     }
-                }
-            }
-
-
-            //use push on the array to add newly generated cubes 
-            fallingObjects.push(model);
-            addMessage("New model added to canvas with coordinates (" + newXval + "," + startHeight + "," + 
-				newZval + "). \nCurrent height = " + staticYcoords[staticObjects.length]/2 + // dividing by two gives the number of objects
-				"\nNumber of models in fallingObjects = " + fallingObjects.length + 
-				". \nNumber of staticObjects = " + staticObjects.length + "\n");
-		}
-
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        var viewMatrix = camera.getRotatedViewMatrix(angle);
-        var fallingModelMatrix = new Matrix4();
-        var staticModelMatrix = new Matrix4();
-
-        //draw all the falling objects
-        for (var f = 0; f < fallingObjects.length; f++) {
-		
-            //set translation for falling objects
-            fallingModelMatrix.setTranslate(staticXcoords[staticObjects.length+f] * delta, staticYcoords[staticObjects.length+f]/2 * delta, staticZcoords[staticObjects.length+f] * delta)
-                   .translate(center[0], ((staticYcoords[staticObjects.length+f]) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, center[2])
-                   .rotate(1, 0, 1, 1)
-                   .translate(-center[0], ((staticYcoords[staticObjects.length+f]) >= sceneBounds.min[1]) ? fallingObjects[f].getHeight() * fallSpeed : 0, -center[2]);
-			
-            //draw all objects in the falling objects array
-            fallingObjects[f].draw(projMatrix, viewMatrix, fallingModelMatrix);
-
-            //move the object from the falling array to the static array
-            if (fallingObjects[f].getHeight() == 0) {
-                staticObjects.push(fallingObjects.shift());
-                gridHeight[staticXcoords[staticObjects.length-1]][staticZcoords[staticObjects.length-1]] +=1;
-            }
-            else {
-                fallingObjects[f].decrHeight();
-                //addMessage("object #"+f+" has current height :" +fallingObjects[f].getHeight());
-            }
+                    
+                    angle++; if (angle > 360) angle -= 360;
+                    window.requestAnimationFrame(draw);
+                    
+                    timer++;
+                    
+                    if (timer % 5 == 0)
+                    {
+                    
+                    
+            randomNumber(0, GRID_SIZE_Z, 0);
+            var newZ = rand;
+                    
+                    randomNumber(0, GRID_SIZE_X, 0);
+            var newX = rand;
+                    
+                    var height = gridHeight[newZ][newX].length;
+                    
+                     gridHeight[newZ][newX].push(GRID_SIZE_Y - height);
+                    
+                    timer = 0;
+                    
+                    } 
+                    
         }
-
-        //draw all the static objects
-        for (s = 0; s < staticObjects.length; s++) {
-            //set translation for static cubes
-            staticModelMatrix.setTranslate(staticXcoords[s] * delta, staticYcoords[s], staticZcoords[s] * delta)
-               .translate(center[0], 0, center[2])
-               .rotate(1, 0, 1, 1)
-               .translate(-center[0], 0, -center[2]);
-
-            //draw all objects in the static objects array
-            staticObjects[s].draw(projMatrix, viewMatrix, staticModelMatrix);
-        }
-        writeHeightMap(staticObjects.length);
-
-        angle++;
-        if (angle > 360) angle -= 360;
-        //if (height > 0) height--;
-        window.requestAnimationFrame(draw);
-
-    }//end draw
-
+    
     gl.clearColor(1, 1, 1, 1);
     gl.enable(gl.DEPTH_TEST);
-
+    
     draw();
+    
     return 1;
 }
