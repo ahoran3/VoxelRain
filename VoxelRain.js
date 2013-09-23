@@ -8,8 +8,7 @@ var modelId = 0;
 var canvas = null;
 var gl = null;
 var messageField = null;
-var rand = null;
-var generationTime = 0; //first object should fall instantly
+var heightMap = null;
 
 var GRID_SIZE_X = 10; // global constants used for quick debugging
 var GRID_SIZE_Y = 16; // note: this will be used in an array
@@ -70,14 +69,41 @@ function menuHandler() {
     
 }
 
-function getObject() {
-    if (modelId == 0)
-        modelObject = cubeObject;
-    else if (modelId == 1)
-        modelObject = teapotObject;
-    else
-        modelObject = skullObject;
+function randomNumber(i, j, decimalspots) {
+    var high = j;
+    var low = i;
+    var rand = Math.random();
+    return (rand * (high - (low)) + low).toFixed(decimalspots);
 }
+
+function writeHeightMap(gridHeight) 
+{
+        
+        var numberOfObjects = 0;
+        
+        var string = "";
+        
+        for(var z = 0; z < gridHeight.length; z++)
+        {
+        
+            for(x=0; x < gridHeight[z].length; x++)
+                {
+                
+                var value = "" + gridHeight[z][x].length;
+                
+                string += value + (value.length < 2? "___" : "__");
+                
+                numberOfObjects += gridHeight[z][x].length;
+                
+                }
+                
+            string += "\n";
+
+         }      
+          
+        heightMap.value = "Number of Objects: " + numberOfObjects + "\n\n" + string;
+              
+    }
 
 function mainFunction() {
     setupMessageArea();
@@ -87,16 +113,6 @@ function mainFunction() {
     addMessage(((canvas) ? "Canvas acquired" : "Error: Can not acquire canvas"));
     gl = getWebGLContext(canvas);
     console.log("done");
-    
-    //generates a random number between i and j 
-    //up to any number of deciaml spots.
-    //can be used for random colors and random positions
-    function randomNumber(i, j, decimalspots) {
-        var high = j;
-        var low = i;
-        rand = Math.random();
-        rand = (rand * (high - (low)) + low).toFixed(decimalspots);
-    }
     
     var N = [GRID_SIZE_X, GRID_SIZE_Y, GRID_SIZE_Z]; 
     
@@ -110,7 +126,7 @@ function mainFunction() {
         for (var x = 0; x < GRID_SIZE_X; x++){
             
             gridHeight[z][x] = new Array();
-                        
+            
         }
         
         }
@@ -118,7 +134,7 @@ function mainFunction() {
     var angle=0;
     
     var timer = 0;
-    
+             
     cubeScene = new renderableScene(gl, cubeObject, N);
     
     teapotScene = new renderableScene(gl, teapotObject, N);
@@ -131,6 +147,7 @@ function mainFunction() {
         {
         
         gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+        
         var viewMatrix = scene.camera.getRotatedViewMatrix(angle);
         var modelMatrix=new Matrix4();
         
@@ -144,15 +161,12 @@ function mainFunction() {
                     var offset = gridHeight[z][x][y]; 
                     
                     modelMatrix.setTranslate(x*scene.delta, (offset + y)*scene.delta, z*scene.delta)
-                        //.translate(scene.center[0],scene.center[1],scene.center[2])
-                        //.rotate(angle*(x+y+z),0,1,1)
-                        //.translate(-scene.center[0],-scene.center[1],-scene.center[2]);
                         scene.model.draw(scene.projMatrix, viewMatrix, modelMatrix);
                     
-                    if (offset != 0)
+                    if (offset >= 0)
                         {
                         
-                        gridHeight[z][x][y] = offset - 0.5;
+                        gridHeight[z][x][y] = offset - 0.1;
                         
                         }
                     
@@ -163,23 +177,22 @@ function mainFunction() {
                     
                     timer++;
                     
-                    if (timer % 5 == 0)
-                    {
-                    
-                    
-            randomNumber(0, GRID_SIZE_Z, 0);
-            var newZ = rand;
-                    
-                    randomNumber(0, GRID_SIZE_X, 0);
-            var newX = rand;
-                    
-                    var height = gridHeight[newZ][newX].length;
-                    
-                     gridHeight[newZ][newX].push(GRID_SIZE_Y - height);
-                    
-                    timer = 0;
-                    
-                    } 
+                    if (timer % 10 == 0)
+                        {
+                        
+                        var newZ = randomNumber(0, GRID_SIZE_Z - 1, 0);
+                        
+                        var newX = randomNumber(0, GRID_SIZE_X - 1, 0);
+                        
+                        var height = gridHeight[newZ][newX].length;
+                        
+                        gridHeight[newZ][newX].push(GRID_SIZE_Y + 4 - height);
+                        
+                        timer = 0;
+                        
+                        writeHeightMap(gridHeight); 
+                        
+                        } 
                     
         }
     
@@ -189,4 +202,5 @@ function mainFunction() {
     draw();
     
     return 1;
+    
 }
