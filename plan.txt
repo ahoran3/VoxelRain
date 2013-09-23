@@ -1,1 +1,10 @@
-You will submit a implementation plan. The plan should start with an overview of all the programming components of the project, and then details of how do you plan to complete implementing each component (not the code). (5 points)
+Jonathan Cools-Lartigue, Brandon Forster
+Matt Hansen, Alex Horan
+CAP 4720- Project 1
+24 September 2013
+Implementation Plan
+The project is divided up into 7 main components. These are the standard library, the provided models, the HTML document that launches the Javascript code, the main VoxelRain program, and helper programs for the camera, renderable objects, and the scene. 
+
+We will not be discussing the standard library and provided models, since there's nothing implemented there specific to this project. The HTML document will likewise not be discussed since its implementation is trivial and pretty boring.
+
+The meat and potatoes of the project is in the VoxelRain.js file; this is where most of the processing happens. In broad terms of execution, the program will initialize all of the fancy menu and message areas and canvas. From there, we build a new 3D array to store the height of objects stacked up at arbitrary points in the area that objects can occupy.  We begin drawing. 
