@@ -78,34 +78,36 @@ function randomNumber(i, j, decimalspots) {
 
 function writeHeightMap(gridHeight) 
 {
-        
-        var numberOfObjects = 0;
-        
-        var string = "";
-        
-        for(var z = 0; z < gridHeight.length; z++)
+    
+    var numberOfObjects = 0;
+    
+    var string = "";
+    
+    for(var z = 0; z < gridHeight.length; z++)
         {
         
-            for(x=0; x < gridHeight[z].length; x++)
-                {
-                
-                var value = "" + gridHeight[z][x].length;
-                
-                string += value + (value.length < 2? "___" : "__");
-                
-                numberOfObjects += gridHeight[z][x].length;
-                
-                }
-                
-            string += "\n";
+        for(x=0; x < gridHeight[z].length; x++)
+            {
+            
+            var value = "" + gridHeight[z][x].length;
+            
+            string += value + (value.length < 2? "___" : "__");
+            
+            numberOfObjects += gridHeight[z][x].length;
+            
+            }
+        
+        string += "\n";
+        
+        }      
+    
+    heightMap.value = "Number of Objects: " + numberOfObjects + "\n\n" + string;
+    
+}
 
-         }      
-          
-        heightMap.value = "Number of Objects: " + numberOfObjects + "\n\n" + string;
-              
-    }
-
-function mainFunction() {
+function mainFunction() 
+{
+    
     setupMessageArea();
     setupMenu();
     
@@ -118,7 +120,7 @@ function mainFunction() {
     
     var gridHeight = new Array();
     
-    for(var z = 0; z < GRID_SIZE_Z; z++)
+    for (var z = 0; z < GRID_SIZE_Z; z++)
         {
         
         gridHeight[z] = new Array();
@@ -134,7 +136,7 @@ function mainFunction() {
     var angle=0;
     
     var timer = 0;
-             
+    
     cubeScene = new renderableScene(gl, cubeObject, N);
     
     teapotScene = new renderableScene(gl, teapotObject, N);
