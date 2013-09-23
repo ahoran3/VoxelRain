@@ -22,6 +22,7 @@ function Camera(gl,d,modelUp) // Compute a camera from model's bounding box dime
 		var e = m.multiplyVector4(new Vector4([eye[0],eye[1],eye[2],1])).elements;
 		return [e[0],e[1],e[2]];
 	};
+    
 	this.getViewMatrix=function(e){
 		if (e==undefined) e = eye;
 		return new Matrix4().setLookAt(e[0],e[1],e[2],at[0],at[1],at[2],up[0],up[1],up[2]);

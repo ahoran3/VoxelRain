@@ -168,7 +168,7 @@ function mainFunction()
                     if (offset >= 0)
                         {
                         
-                        gridHeight[z][x][y] = offset - 0.1;
+                        gridHeight[z][x][y] = offset - 0.1; // rate of fall
                         
                         }
                     
@@ -179,7 +179,7 @@ function mainFunction()
                     
                     timer++;
                     
-                    if (timer % 10 == 0)
+                    if (timer % 10 == 0) //cube production rate
                         {
                         
                         var newZ = randomNumber(0, GRID_SIZE_Z - 1, 0);
@@ -188,7 +188,7 @@ function mainFunction()
                         
                         var height = gridHeight[newZ][newX].length;
                         
-                        gridHeight[newZ][newX].push(GRID_SIZE_Y + 4 - height);
+                        gridHeight[newZ][newX].push(GRID_SIZE_Y + 8 - height);
                         
                         timer = 0;
                         
