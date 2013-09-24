@@ -113,7 +113,7 @@ function mainFunction()
     
     canvas = document.getElementById('myCanvas');
     addMessage(((canvas) ? "Canvas acquired" : "Error: Can not acquire canvas"));
-    gl = getWebGLContext(canvas);
+    gl = getWebGLContext(canvas, false); // disable debugging
     console.log("done");
     
     var N = [GRID_SIZE_X, GRID_SIZE_Y, GRID_SIZE_Z]; 
