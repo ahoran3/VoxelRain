@@ -10,9 +10,9 @@ var gl = null;
 var messageField = null;
 var heightMap = null;
 
-var GRID_SIZE_X = 10; // global constants used for quick debugging
+var GRID_SIZE_X = 9; // global constants used for quick debugging
 var GRID_SIZE_Y = 16; // note: this will be used in an array
-var GRID_SIZE_Z = 10; // so a grid size of 9 is actually 10x10
+var GRID_SIZE_Z = 9; // so a grid size of 9 is actually 10x10
 
 var scene = null;
 var cubeScene = null;
@@ -91,7 +91,7 @@ function writeHeightMap(gridHeight)
             
             var value = "" + gridHeight[z][x].length;
             
-            string += value + (value.length < 2? "___" : "__");
+            string += value + (value.length < 2? "__" : "_");
             
             numberOfObjects += gridHeight[z][x].length;
             
@@ -101,7 +101,7 @@ function writeHeightMap(gridHeight)
         
         }      
     
-    heightMap.value = "Number of Objects: " + numberOfObjects + "\n\n" + string;
+    heightMap.value = "Number of Objects: " + numberOfObjects + "\n" + string;
     
 }
 
@@ -179,7 +179,7 @@ function mainFunction()
                     
                     timer++;
                     
-                    if (timer % 10 == 0) //cube production rate
+                    if (timer % 15 == 0) //cube production rate
                         {
                         
                         var newZ = randomNumber(0, GRID_SIZE_Z - 1, 0);

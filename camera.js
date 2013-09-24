@@ -5,7 +5,7 @@
 
 function Camera(gl,d,modelUp) // Compute a camera from model's bounding box dimensions
 {
-	var center = [(d.min[0]+d.max[0])/2,(d.min[1]+d.max[1])/2,(d.min[2]+d.max[2])/2];
+	var center = [(d.min[0]+d.max[0])/2,(d.min[1]+d.max[1])/2.5,(d.min[2]+d.max[2])/2];
 	var diagonal = Math.sqrt(Math.pow((d.max[0]-d.min[0]),2)+Math.pow((d.max[1]-d.min[1]),2)+Math.pow((d.max[2]-d.min[2]),2));
 	//console.log(center+" "+diagonal);
 	
@@ -13,9 +13,9 @@ function Camera(gl,d,modelUp) // Compute a camera from model's bounding box dime
 	var at = center;
 	var eye = [center[0], center[1]+diagonal*0.5, center[2]+diagonal*1.5];
 	var up = [modelUp[0],modelUp[1],modelUp[2]];
-	var near = diagonal*0.1;
+	var near = diagonal*.05;
 	var far = diagonal*3;
-	var FOV = 32;
+	var FOV = 34;
 
 	this.getRotatedCameraPosition= function(angle){
 		var m = new Matrix4().setTranslate(at[0],at[1],at[2]).rotate(angle,up[0],up[1],up[2]).translate(-at[0],-at[1],-at[2]);
