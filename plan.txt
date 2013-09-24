@@ -7,7 +7,7 @@ The project is divided up into 7 main components. These are the standard library
 
 We will not be discussing the standard library, provided models, or camera or Renderable since there's nothing implemented there specific to this project. The HTML document will likewise not be discussed since its implementation is trivial and pretty boring.
 
-The meat and potatoes of the project is in the VoxelRain.js file; this is where most of the processing happens. In broad terms of execution, the program will initialize all of the fancy menu and message areas and canvas. From there, we build a new 3D array to store the height of objects stacked up at arbitrary points in the area that objects can occupy.  We begin drawing. 
+The meat and potatoes of the project is in the VoxelRain.js file; this is where most of the processing happens. In broad terms of execution, the program will initialize all of the fancy menu and message areas and canvas. From there, we build a new 3D array to store the offset from the start position to its final position of objects stacked up at arbitrary points in the area that objects can occupy. We begin drawing. 
 
 Set the components of the model matrices of the objects at randomized points so they spawn all over the place. Make them fall by reducing the value of the height value in the 3x3 matrix we set up to handle objects. Keep doing this for every frame, and on every 10th frame draw a new object. Objects with a height of zero have their fall value set to zero, so when the model matrix translation loop gets to them, do nothing.
 
