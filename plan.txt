@@ -16,6 +16,8 @@ We are creating a file called scene.js to abstract out the rendering. This file 
 
 Jonathan Cools-Lartigue:
 - Fixed spacing bugs between cube layers
+- implemented model switching
+- model generation and falling
 - Created scene file
 - Implemented code allowing multiple objects to fall simultaneously
 - Cleaned up .js code and created additional files for improved readability
