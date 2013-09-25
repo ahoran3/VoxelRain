@@ -17,6 +17,9 @@ We are creating a file called scene.js to abstract out the rendering. This file 
 Jonathan Cools-Lartigue:
 - Fixed spacing bugs between cube layers
 - Created scene file
+- Implemented code allowing multiple objects to fall simultaneously
+- Cleaned up .js code and created additional files for improved readability
+- Layout transformations
 
 Brandon Forster:
 - Multiple static object creation
@@ -31,6 +34,14 @@ Matt Hansen:
 
 Alex Horan:
 - Initial project setup
-- Draw multiple objects from dynamic array
-- Multiple objects falling
+- Multiple formatting changes to the Proj1.html file. 
+- Created random number function to be used in each objects random position
+- Created seperate array objects to keep track of the staticObjects and fallingObjects
+- Set up seperate translation matricies for fallingObject and staticObjects
+- Created second message field and implemented the HeightMap feature
+- Edited camera settings to prevent objects from rotating out of scene 
+
+
+
+
 
