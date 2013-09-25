@@ -12,3 +12,25 @@ The meat and potatoes of the project is in the VoxelRain.js file; this is where 
 Set the components of the model matrices of the objects at randomized points so they spawn all over the place. Make them fall by reducing the value of the height value in the 3x3 matrix we set up to handle objects. Keep doing this for every frame, and on every 10th frame draw a new object. Objects with a height of zero have their fall value set to zero, so when the model matrix translation loop gets to them, do nothing.
 
 We are creating a file called scene.js to abstract out the rendering. This file will determine the "delta," the value that determines the spacing between objects by looking at the minimum and maximum edge locations of arbitrary objects. It also determines the minimum and maximal edge locations of the entire scene, by looking at the objects drawn on the extremities of the grid. From there, it makes an arbitrary Camera and projection matrix. This file is discrete from VoxelRain so that the one call in VoxelRain can be used for a cube, teapot or skull.
+
+
+Jonathan Cools-Lartigue:
+- Fixed spacing bugs between cube layers
+- Created scene file
+
+Brandon Forster:
+- Multiple static object creation
+- Objects align to grid
+- Object stacking and collision
+- Implementation plan rough draft
+
+Matt Hansen:
+- Camera rotation
+- Y-axis Translations
+- Positioning of objects in grid
+
+Alex Horan:
+- Initial project setup
+- Draw multiple objects from dynamic array
+- Multiple objects falling
+
